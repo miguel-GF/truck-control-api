@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Constants\ApiConstantes;
+
 class ApiResponse
 {
 	/**
@@ -12,7 +14,7 @@ class ApiResponse
 	 * @param  mixed $status
 	 * @return mixed
 	 */
-	public static function success($data, $mensaje, $status = 200)
+	public static function success($data, $mensaje, $status = ApiConstantes::EXITO_STATUS)
 	{
 		return response()->json([
 			'exito' => true,
@@ -28,7 +30,7 @@ class ApiResponse
 	 * @param  mixed $status
 	 * @return mixed
 	 */
-	public static function error($mensaje, $status = 400)
+	public static function error($mensaje, $status = ApiConstantes::ERROR_STATUS)
 	{
 		return response()->json([
 			'exito' => false,

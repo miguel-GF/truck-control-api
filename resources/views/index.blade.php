@@ -1,5 +1,5 @@
 @php
-    use App\Constants\Constantes;
+    use App\Constants\ApiConstantes;
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
@@ -41,7 +41,7 @@
                                                             ───▄▄██▌█░░░░░░░░░░░░▐
                                                             ▄▄▄▌▐██▌█░░░░░░░░░░░░▐
                                                             ███████▌█▄▄▄▄▄▄▄▄▄▄▄▄▌
-                                                            ▀❍▀▀▀▀▀▀▀❍❍▀▀▀▀▀▀❍❍▀           <span class="azul">V-{{  Constantes::VERSION_API; }} </span>
+                                                            ▀❍▀▀▀▀▀▀▀❍❍▀▀▀▀▀▀❍❍▀           <span class="azul">V-{{  ApiConstantes::VERSION_API }} </span>
 
         </pre>                                                                                                                                                       
 
