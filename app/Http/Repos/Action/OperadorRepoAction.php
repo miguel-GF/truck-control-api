@@ -26,4 +26,22 @@ class OperadorRepoAction
       throw new Exception("Error al agregar operador");
     }
   }
+
+  /**
+   * actualizar
+   *
+   * @param  mixed $insert
+   * @return mixed
+   */
+  public static function actualizar(array $update, $id)
+  {
+    try {
+      return DB::table(self::table)
+        ->where('id', $id)
+        ->update($update);
+    } catch (QueryException $e) {
+      Log::error("Error de update en operadores -> $e");
+      throw new Exception("Error al actualizar operador");
+    }
+  }
 }

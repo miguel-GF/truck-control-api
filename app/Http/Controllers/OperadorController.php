@@ -37,4 +37,27 @@ class OperadorController extends Controller
 			return ApiResponse::error($th->getMessage());
 		}
 	}
+	public function editar(OperadorRequest $request, $id)
+	{
+		try {
+			$params = $request->all();
+			$params['id'] = $id;
+			$id = OperadorServiceAction::editar($params);
+			return ApiResponse::success($id, "Operador editado correctamente.");
+		} catch (\Throwable $th) {
+			return ApiResponse::error($th->getMessage());
+		}
+	}
+
+	public function eliminar(OperadorRequest $request, $id)
+	{
+		try {
+			$params = $request->all();
+			$params['id'] = $id;
+			$id = OperadorServiceAction::eliminar($params);
+			return ApiResponse::success($id, "Operador eliminado correctamente.");
+		} catch (\Throwable $th) {
+			return ApiResponse::error($th->getMessage());
+		}
+	}
 }
