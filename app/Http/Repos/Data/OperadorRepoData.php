@@ -7,6 +7,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Exception;
+
 class OperadorRepoData
 {
   /**
@@ -25,6 +26,30 @@ class OperadorRepoData
     } catch (QueryException $e) {
       Log::error("Error de db en operadores -> $e");
       throw new Exception("Error al listar operadores");
+    }
+  }
+
+  /**
+   * obtenerMaximo
+   *
+   * @return mixed
+   */
+  public static function obtenerMaximo()
+  {
+    try {
+      $result = DB::table('operadores')
+        ->selectRaw("COALESCE(MAX(clave), 999) + 1 as maximo")
+        ->sharedLock()
+        ->first()
+        ;
+        if ($result) {
+          return $result->maximo;
+        } else {
+            return 1000; // Si no hay registros, se devuelve 1 como valor predeterminado
+        }
+    } catch (QueryException $e) {
+      Log::error("Error de db max en operadores -> $e");
+      throw new Exception("Error al insertar operador");
     }
   }
 }
