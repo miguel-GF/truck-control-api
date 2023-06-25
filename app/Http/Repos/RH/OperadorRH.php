@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Repos\Filter;
+namespace App\Http\Repos\RH;
 
 use Illuminate\Database\Query\Builder;
 
-class OperadorFilter
+class OperadorRH
 {
   /**
    * filtrosListar
@@ -15,12 +15,8 @@ class OperadorFilter
    */
   public static function filtrosListar(Builder &$query, $filtros)
   {
-    try {
-      if (!empty($filtros['clave'])) {
-        $query->where('clave', $filtros['clave']);
-      }
-    } catch (\Throwable $th) {
-      throw $th;
+    if (!empty($filtros['clave'])) {
+      $query->where('clacce', $filtros['clave']);
     }
   }
 }
