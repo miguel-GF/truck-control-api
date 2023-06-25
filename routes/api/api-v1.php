@@ -9,4 +9,10 @@ Route::prefix('operadores')->group(function () {
 
 	// POST
 	Route::post('/', [OperadorController::class, 'agregar']);
+
+	// PATCH
+	Route::patch('/{id}', [OperadorController::class, 'editar']);
+	
+	// DELETE
+	Route::delete('/{id}', [OperadorController::class, 'eliminar']);
 });
