@@ -15,10 +15,14 @@ return new class extends Migration
     {
         Schema::create('operadores', function (Blueprint $table) {
             $table->id();
-            $table->string('nombres');
+            $table->string('nombre');
             $table->string('apellidos');
             $table->integer('clave');
             $table->string('telefono')->nullable();
+            $table->string('registro_autor_id')->nullable();
+            $table->timestamp('registro_fecha');
+            $table->string('actualizacion_autor_id')->nullable();
+            $table->timestamp('actualizacion_fecha')->nullable();
         });
     }
 
