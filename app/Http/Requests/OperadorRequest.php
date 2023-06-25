@@ -33,9 +33,9 @@ class OperadorRequest extends FormRequest
 			'telefono' => 'nullable',
 		];
 
-		// if ($this->isMethod('PUT')) {
-		// 	$rules['campo1'] = 'required';
-		// }
+		if ($this->isMethod('DELETE')) {
+			$rules = [];
+		}
 
 		return $rules;
 	}
