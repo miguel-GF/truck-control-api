@@ -4,5 +4,7 @@ namespace App\Constants;
 
 class Constantes
 {
-    // const VERSION_API = "1.0.01";
+    const PENDIENTE_STATUS = 100;
+    const ACTIVO_STATUS = 200;
+    const INACTIVO_STATUS = 300;
 }
