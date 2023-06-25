@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('apellidos');
             $table->integer('clave');
             $table->string('telefono')->nullable();
+            $table->integer('status');
             $table->string('registro_autor_id')->nullable();
             $table->timestamp('registro_fecha');
             $table->string('actualizacion_autor_id')->nullable();
