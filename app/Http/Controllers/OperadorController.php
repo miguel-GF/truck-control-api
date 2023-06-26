@@ -21,41 +21,61 @@ class OperadorController extends Controller
 		try {
 			$params = $request->all();
 			$operadores = OperadorServiceData::listar($params);
-			return ApiResponse::success($operadores, "Datos obtenidos correctamente.");
+			return ApiResponse::success("Datos obtenidos correctamente.", $operadores);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
 	}
 
+	/**
+	 * agregar
+	 *
+	 * @param  mixed $request
+	 * @return void
+	 */
 	public function agregar(OperadorRequest $request)
 	{
 		try {
 			$params = $request->all();
 			$id = OperadorServiceAction::agregar($params);
-			return ApiResponse::success($id, "Operador agregado correctamente.");
+			return ApiResponse::success("Operador agregado correctamente.", $id);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
 	}
+	/**
+	 * editar
+	 *
+	 * @param  mixed $request
+	 * @param  mixed $id
+	 * @return void
+	 */
 	public function editar(OperadorRequest $request, $id)
 	{
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			$id = OperadorServiceAction::editar($params);
-			return ApiResponse::success($id, "Operador editado correctamente.");
+			OperadorServiceAction::editar($params);
+			return ApiResponse::success("Operador editado correctamente.");
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
 	}
 
+	/**
+	 * eliminar
+	 *
+	 * @param  mixed $request
+	 * @param  mixed $id
+	 * @return void
+	 */
 	public function eliminar(OperadorRequest $request, $id)
 	{
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			$id = OperadorServiceAction::eliminar($params);
-			return ApiResponse::success($id, "Operador eliminado correctamente.");
+			OperadorServiceAction::eliminar($params);
+			return ApiResponse::success("Operador eliminado correctamente.");
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}

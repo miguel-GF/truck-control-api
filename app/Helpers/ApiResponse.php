@@ -14,7 +14,7 @@ class ApiResponse
 	 * @param  mixed $status
 	 * @return mixed
 	 */
-	public static function success($data, $mensaje, $status = ApiConstantes::EXITO_STATUS)
+	public static function success($mensaje, $data = null, $status = ApiConstantes::EXITO_STATUS)
 	{
 		return response()->json([
 			'exito' => true,
