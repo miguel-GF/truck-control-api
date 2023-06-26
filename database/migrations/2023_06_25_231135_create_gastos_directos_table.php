@@ -16,12 +16,13 @@ return new class extends Migration
         Schema::create('gastos_directos', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('operador_id');
-            $table->unsignedBigInteger('gasto_directo_id');
+            $table->unsignedBigInteger('cat_gasto_directo_id');
             $table->integer('cantidad')->default(1);
+            $table->double('precio');
             $table->double('total');
             $table->integer('folio');
             $table->integer('status');
-            $table->string('serie_y_folio');
+            $table->string('serie_folio');
             $table->string('registro_autor_id')->nullable();
             $table->timestamp('registro_fecha');
             $table->string('actualizacion_autor_id')->nullable();
@@ -29,7 +30,7 @@ return new class extends Migration
 
             // Llaves foráneas
             $table->foreign('operador_id')->references('id')->on('operadores');
-            $table->foreign('gasto_directo_id')->references('id')->on('cat_gastos_directos');
+            $table->foreign('cat_gasto_directo_id')->references('id')->on('cat_gastos_directos');
         });
     }
 
