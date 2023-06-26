@@ -30,7 +30,7 @@ class OperadorRepoAction
   /**
    * actualizar
    *
-   * @param  mixed $insert
+   * @param  mixed $update
    * @return mixed
    */
   public static function actualizar(array $update, $id)

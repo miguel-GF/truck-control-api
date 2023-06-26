@@ -5,6 +5,7 @@ namespace App\Http\Services\Action;
 use App\Constants\Constantes;
 use App\Http\Repos\Action\OperadorRepoAction;
 use App\Http\Repos\Data\OperadorRepoData;
+use App\Http\Services\BO\HelperBO;
 use App\Http\Services\BO\OperadorBO;
 use App\Models\Operador;
 use Illuminate\Support\Facades\DB;
@@ -33,7 +34,7 @@ class OperadorServiceAction
 			throw $th;
 		}
 	}
-	
+
 	/**
 	 * editar
 	 *
@@ -73,7 +74,7 @@ class OperadorServiceAction
 				throw new Exception('Operador ya fue eliminado anteriormente');
 			}
 			DB::beginTransaction();
-			$update = OperadorBO::armarDelete($datos);
+			$update = HelperBO::armarDeleteGlobal($datos);
 			OperadorRepoAction::actualizar($update, $datos['id']);
 			DB::commit();
 		} catch (\Throwable $th) {

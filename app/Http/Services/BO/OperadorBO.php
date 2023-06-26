@@ -49,22 +49,4 @@ class OperadorBO
       throw $th;
     }
   }
-
-  /**
-   * armarUpdate
-   *
-   * @param  mixed $datos
-   * @return array
-   */
-  public static function armarDelete(array $datos): array
-  {
-    try {
-      return [
-        'actualizacion_fecha' => DateUtil::now(),
-        'status' => Constantes::INACTIVO_STATUS,
-      ];
-    } catch (\Throwable $th) {
-      throw $th;
-    }
-  }
 }

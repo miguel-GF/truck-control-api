@@ -16,7 +16,7 @@ class OperadorRH
   public static function filtrosListar(Builder &$query, $filtros)
   {
     if (!empty($filtros['clave'])) {
-      $query->where('clacce', $filtros['clave']);
+      $query->where('clave', $filtros['clave']);
     }
   }
 }
