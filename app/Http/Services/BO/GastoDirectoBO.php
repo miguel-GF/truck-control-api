@@ -27,6 +27,7 @@ class GastoDirectoBO
         'folio' => $datos['folio'],
         'serie_folio' => "GD" . StringUtil::cadenaPadding($datos['folio']),
         'registro_fecha' => DateUtil::now(),
+        'aplicacion_fecha' => $datos['aplicacionFecha'],
       ];
     } catch (\Throwable $th) {
       throw $th;

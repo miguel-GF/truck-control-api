@@ -27,7 +27,7 @@ return new class extends Migration
             $table->timestamp('registro_fecha');
             $table->string('actualizacion_autor_id')->nullable();
             $table->timestamp('actualizacion_fecha')->nullable();
-
+            $table->date('aplicacion_fecha');
             // Llaves foráneas
             $table->foreign('operador_id')->references('id')->on('operadores');
             $table->foreign('cat_gasto_directo_id')->references('id')->on('cat_gastos_directos');
