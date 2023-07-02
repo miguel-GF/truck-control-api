@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\GastoDirectoController;
+use App\Http\Controllers\DeduccionController;
 use App\Http\Controllers\OperadorController;
 use Illuminate\Support\Facades\Route;
 
@@ -33,4 +34,18 @@ Route::prefix('gastos')->group(function () {
 		// DELETE
 		Route::delete('/{id}', [GastoDirectoController::class, 'eliminar']);
 	});
+});
+
+Route::prefix('deducciones')->group(function () {
+	// GET
+	Route::get('/', [DeduccionController::class, 'listar']);
+	
+	// POST
+	Route::post('/', [DeduccionController::class, 'agregar']);
+	
+	// PATCH
+	Route::patch('/{id}', [DeduccionController::class, 'editar']);
+		
+	// DELETE
+	Route::delete('/{id}', [DeduccionController::class, 'eliminar']);
 });
