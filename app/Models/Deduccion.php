@@ -8,5 +8,5 @@ use Illuminate\Database\Eloquent\Model;
 class Deduccion extends Model
 {
     use HasFactory;
-    protected $table = 'gastos_directos';
+    protected $table = 'deduciones';
 }

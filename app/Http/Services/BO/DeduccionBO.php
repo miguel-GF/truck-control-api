@@ -25,8 +25,8 @@ class DeduccionBO
         'total' => $datos['total'],
         'folio' => $datos['folio'],
         'status' => Constantes::ACTIVO_STATUS,        
-        'serie_folio' => "GD" . StringUtil::cadenaPadding($datos['folio']),
-        //'registro_autor_id' => "GD" . StringUtil::cadenaPadding($datos['folio']),
+        'serie_folio' => "DE" . StringUtil::cadenaPadding($datos['folio']),
+        //'registro_autor_id' => "DE" . StringUtil::cadenaPadding($datos['folio']),
         'registro_fecha' => DateUtil::now(),
         //'actualizacion_autor_id' => 
         //'actualizacion_fecha' => DateUtil::now(),

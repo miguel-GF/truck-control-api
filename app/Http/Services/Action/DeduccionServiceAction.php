@@ -47,7 +47,7 @@ class DeduccionServiceAction
 			$gasto = Deduccion::where('status', Constantes::ACTIVO_STATUS)->find($datos['id']);
 
 			if (empty($gasto)) {
-				throw new Exception('Gasto directo no encontrado');
+				throw new Exception('Deduccion no encontrado');
 			}
 			DB::beginTransaction();
 			$update = DeduccionBO::armarUpdate($datos);

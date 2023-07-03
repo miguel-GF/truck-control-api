@@ -38,7 +38,7 @@ class DeduccionController extends Controller
 		try {
 			$params = $request->all();
 			$id = DeduccionServiceAction::agregar($params);
-			return ApiResponse::success("Duduccion agregado correctamente.", $id);
+			return ApiResponse::success("Deduccion agregado correctamente.", $id);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
