@@ -11,10 +11,13 @@ class DateUtil
    *
    * @return mixed
    */
-  public static function now()
+  public static function now(bool $mostrarHora = true)
   {
     $carbon = new Carbon();
-    return $carbon->now();
+    if ($mostrarHora) 
+      return $carbon->now();
+    else
+      return $carbon->now()->format('Y-m-d');
   }
 
   /**
@@ -27,5 +30,10 @@ class DateUtil
   {
     $newDate = Carbon::parse($fecha)->setTimezone(env('TIME_ZONE'));
     return $newDate->format('Y-m-d H:i:s');
+  }
+
+  public static function sumarDias($fecha, $dias){
+    $newDate = Carbon::parse($fecha)->setTimezone(env('TIME_ZONE'));
+    return $newDate->addDays($dias);
   }
 }

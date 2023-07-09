@@ -3,15 +3,15 @@
 namespace App\Http\Services\Action;
 
 use App\Constants\Constantes;
-use App\Http\Repos\Action\OperadorRepoAction;
-use App\Http\Repos\Data\OperadorRepoData;
+use App\Http\Repos\Action\NominaRepoAction;
+use App\Http\Repos\Data\NominaRepoData;
 use App\Http\Services\BO\HelperBO;
-use App\Http\Services\BO\OperadorBO;
-use App\Models\Operador;
+use App\Http\Services\BO\NominaBO;
+use App\Models\Nomina;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
-class OperadorServiceAction
+class NominaServiceAction
 {
 	/**
 	 * agregar
@@ -22,11 +22,11 @@ class OperadorServiceAction
 	public static function agregar(array $datos)
 	{
 		try {
-			$max = OperadorRepoData::obtenerMaximo();
-			$datos['clave'] = $max;
+			$max = NominaRepoData::obtenerMaximo();
+			$datos['folio'] = $max;
 			DB::beginTransaction();
-			$insert = OperadorBO::armarInsert($datos);
-			$id = OperadorRepoAction::agregar($insert);			
+			$insert = NominaBO::armarInsert($datos);
+			$id = NominaRepoAction::agregar($insert);			
 			DB::commit();
 			return $id;
 		} catch (\Throwable $th) {
@@ -44,14 +44,14 @@ class OperadorServiceAction
 	public static function editar(array $datos)
 	{
 		try {
-			$operador = Operador::where('status', Constantes::ACTIVO_STATUS)->find($datos['id']);
+			$operador = Nomina::where('status', Constantes::ACTIVO_STATUS)->find($datos['id']);
 
 			if (empty($operador)) {
-				throw new Exception('Operador no encontrado');
+				throw new Exception('Nomina no encontrado');
 			}
 			DB::beginTransaction();
-			$update = OperadorBO::armarUpdate($datos);
-			OperadorRepoAction::actualizar($update, $datos['id']);
+			$update = NominaBO::armarUpdate($datos);
+			NominaRepoAction::actualizar($update, $datos['id']);
 			DB::commit();
 		} catch (\Throwable $th) {
 			DB::rollBack();
@@ -68,14 +68,14 @@ class OperadorServiceAction
 	public static function eliminar(array $datos)
 	{
 		try {
-			$operador = Operador::where('status', Constantes::INACTIVO_STATUS)->find($datos['id']);
+			$nomina = Nomina::where('status', Constantes::INACTIVO_STATUS)->find($datos['id']);
 
-			if (!empty($operador)) {
-				throw new Exception('Operador ya fue eliminado anteriormente');
+			if (!empty($nomina)) {
+				throw new Exception('Nomina ya fue eliminado anteriormente');
 			}
 			DB::beginTransaction();
 			$update = HelperBO::armarDeleteGlobal($datos);
-			OperadorRepoAction::actualizar($update, $datos['id']);
+			NominaRepoAction::actualizar($update, $datos['id']);
 			DB::commit();
 		} catch (\Throwable $th) {
 			DB::rollBack();
