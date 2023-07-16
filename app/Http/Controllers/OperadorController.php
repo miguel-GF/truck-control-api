@@ -55,8 +55,8 @@ class OperadorController extends Controller
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			OperadorServiceAction::editar($params);
-			return ApiResponse::success("Operador editado correctamente.");
+			$operador = OperadorServiceAction::editar($params);
+			return ApiResponse::success("Operador editado correctamente.", $operador);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}

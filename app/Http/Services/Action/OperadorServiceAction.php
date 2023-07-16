@@ -47,7 +47,7 @@ class OperadorServiceAction
 	 * editar
 	 *
 	 * @param  mixed $datos
-	 * @return void
+	 * @return array
 	 */
 	public static function editar(array $datos)
 	{
@@ -60,10 +60,18 @@ class OperadorServiceAction
 			DB::beginTransaction();
 			$update = OperadorBO::armarUpdate($datos);
 			OperadorRepoAction::actualizar($update, $datos['id']);
+			$operador['nombre_operador'] = "{$update['nombre']} {$update['apellidos']}";
+			$operador['nombre'] = $update['nombre'];
+			$operador['apellidos'] = $update['apellidos'];
+			$operador['telefono'] = $update['telefono'];
+			$operador['id'] = $datos['id'];
+			
 			DB::commit();
-		} catch (\Throwable $th) {
+			return $operador;
+		} catch (ErrorException $e) {
 			DB::rollBack();
-			throw $th;
+			LogUtil::log("error", $e);
+			throw new Exception("Ocurrio un error al editar operador");
 		}
 	}
 
