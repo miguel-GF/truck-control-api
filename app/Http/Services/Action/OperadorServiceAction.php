@@ -8,7 +8,10 @@ use App\Http\Repos\Data\OperadorRepoData;
 use App\Http\Services\BO\HelperBO;
 use App\Http\Services\BO\OperadorBO;
 use App\Models\Operador;
+use App\Utils\LogUtil;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use ErrorException;
 use Exception;
 
 class OperadorServiceAction
@@ -25,13 +28,18 @@ class OperadorServiceAction
 			$max = OperadorRepoData::obtenerMaximo();
 			$datos['clave'] = $max;
 			DB::beginTransaction();
+			
 			$insert = OperadorBO::armarInsert($datos);
 			$id = OperadorRepoAction::agregar($insert);			
+			$insert['id'] = $id;
+			$insert['nombre_operador'] = "{$insert['nombre']} {$insert['apellidos']}";
+			
 			DB::commit();
-			return $id;
-		} catch (\Throwable $th) {
+			return $insert;
+		} catch (ErrorException $e) {
 			DB::rollBack();
-			throw $th;
+			LogUtil::log("error", $e);
+			throw new Exception("Ocurrio un error al agregar operador");
 		}
 	}
 

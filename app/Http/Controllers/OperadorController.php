@@ -37,8 +37,8 @@ class OperadorController extends Controller
 	{
 		try {
 			$params = $request->all();
-			$id = OperadorServiceAction::agregar($params);
-			return ApiResponse::success("Operador agregado correctamente.", $id);
+			$operador = OperadorServiceAction::agregar($params);
+			return ApiResponse::success("Operador agregado correctamente.", $operador);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
