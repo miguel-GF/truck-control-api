@@ -20,7 +20,10 @@ class OperadorRepoData
   {
     try {
       $query = DB::table('operadores')
-        ->select('*');
+        ->select(
+          "*",
+          DB::raw("CONCAT(nombre,' ',apellidos) as nombre_operador")
+        );
       OperadorRH::filtrosListar($query, (array) $filtros);
       return $query->get()->toArray();
     } catch (QueryException $e) {
