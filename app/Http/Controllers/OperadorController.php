@@ -74,8 +74,8 @@ class OperadorController extends Controller
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			OperadorServiceAction::eliminar($params);
-			return ApiResponse::success("Operador eliminado correctamente.");
+			$operador = OperadorServiceAction::eliminar($params);
+			return ApiResponse::success("Operador eliminado correctamente.", $operador);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}

@@ -33,6 +33,7 @@ class OperadorServiceAction
 			$id = OperadorRepoAction::agregar($insert);			
 			$insert['id'] = $id;
 			$insert['nombre_operador'] = "{$insert['nombre']} {$insert['apellidos']}";
+			$insert['status_nombre'] = "Activo";
 			
 			DB::commit();
 			return $insert;
@@ -79,9 +80,9 @@ class OperadorServiceAction
 	 * eliminar
 	 *
 	 * @param  mixed $datos
-	 * @return void
+	 * @return array
 	 */
-	public static function eliminar(array $datos)
+	public static function eliminar(array $datos): array
 	{
 		try {
 			$operador = Operador::where('status', Constantes::INACTIVO_STATUS)->find($datos['id']);
@@ -92,10 +93,16 @@ class OperadorServiceAction
 			DB::beginTransaction();
 			$update = HelperBO::armarDeleteGlobal($datos);
 			OperadorRepoAction::actualizar($update, $datos['id']);
+			$operador['status'] = $update['status'];
+			$operador['status_nombre'] = "Eliminado";
+			$operador['id'] = $datos['id'];
+			
 			DB::commit();
-		} catch (\Throwable $th) {
+			return $operador;
+		} catch (ErrorException $e) {
 			DB::rollBack();
-			throw $th;
+			LogUtil::log("error", $e);
+			throw new Exception("Ocurrio un error al eliminar operador");
 		}
 	}
 }
