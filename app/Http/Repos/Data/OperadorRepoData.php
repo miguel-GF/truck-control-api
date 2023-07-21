@@ -22,7 +22,12 @@ class OperadorRepoData
       $query = DB::table('operadores')
         ->select(
           "*",
-          DB::raw("CONCAT(nombre,' ',apellidos) as nombre_operador")
+          DB::raw("CONCAT(nombre,' ',apellidos) as nombre_operador"),
+          DB::raw("CASE
+            WHEN status = 200 THEN 'Activo'
+            WHEN status = 300 THEN 'Eliminado'
+            ELSE 'Sin definir'
+          END as status_nombre")
         );
       OperadorRH::filtrosListar($query, (array) $filtros);
       return $query->get()->toArray();
