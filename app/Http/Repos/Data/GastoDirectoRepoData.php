@@ -19,8 +19,20 @@ class GastoDirectoRepoData
   public static function listar(array $filtros): array
   {
     try {
-      $query = DB::table('gastos_directos')
-        ->select('*');
+      $query = DB::table('gastos_directos as gd')
+        ->select(
+          'gd.*',
+          DB::raw("CASE
+            WHEN gd.status = 200 THEN 'Activo'
+            WHEN gd.status = 300 THEN 'Eliminado'
+            ELSE 'Sin definir'
+          END as status_nombre"),
+          DB::raw("CONCAT(o.nombre,' ',o.apellidos) as nombre_operador"),
+          'cgd.nombre as nombre_gasto_directo'
+        )
+        ->join('operadores as o', 'o.id', 'gd.operador_id')
+        ->join('cat_gastos_directos as cgd', 'cgd.id', 'gd.cat_gasto_directo_id')
+        ;
       GastoDirectoRH::filtrosListar($query, (array) $filtros);
       return $query->get()->toArray();
     } catch (QueryException $e) {
