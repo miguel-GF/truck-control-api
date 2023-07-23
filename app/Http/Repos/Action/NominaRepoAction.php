@@ -28,6 +28,23 @@ class NominaRepoAction
   }
 
   /**
+   * agregarDetalle
+   *
+   * @param  mixed $insert
+   * @return mixed
+   */
+  public static function agregarDetalle(array $insert)
+  {
+    try {
+      return DB::table("detalles_nominas")
+        ->insertGetId($insert, 'id');
+    } catch (QueryException $e) {
+      Log::error("Error de insert en detalle nominas -> $e");
+      throw new Exception("Error al agregar detalle nomina");
+    }
+  }
+
+  /**
    * actualizar
    *
    * @param  mixed $update

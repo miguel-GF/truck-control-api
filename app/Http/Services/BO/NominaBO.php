@@ -38,6 +38,30 @@ class NominaBO
   }
 
   /**
+   * armarInsertDetalle
+   *
+   * @param  mixed $datos
+   * @return array
+   */
+  public static function armarInsertDetalle(array $datos): array
+  {
+    try {
+      return [
+        'operador_id' => $datos['operadorId'],
+        'nomina_id' => $datos['nominaId'],
+        'status' => Constantes::ACTIVO_STATUS, 
+        'total_gastos' => 0,
+        'total_deducciones' => 0,
+        'total' => 0,
+        //'registro_autor_id' => "",
+        'registro_fecha' => DateUtil::now(),
+      ];
+    } catch (\Throwable $th) {
+      throw $th;
+    }
+  }
+
+  /**
    * armarUpdate
    *
    * @param  mixed $datos
