@@ -7,7 +7,21 @@ use App\Http\Repos\Data\GastoDirectoRepoData;
 class GastoDirectoServiceData
 {
 	/**
-	 * listar
+	 * listar catálogo
+	 *
+	 * @return array
+	 */
+	public static function listarCatalogo(): array
+	{
+		try {
+			return GastoDirectoRepoData::listarCatalogo();
+		} catch (\Throwable $th) {
+			throw $th;
+		}
+	}
+
+	/**
+	 * listar general
 	 *
 	 * @param  mixed $filtros
 	 * @return array

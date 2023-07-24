@@ -25,6 +25,7 @@ Route::prefix('gastos')->group(function () {
 	Route::prefix('directos')->group(function () {
 		// GET
 		Route::get('/', [GastoDirectoController::class, 'listar']);
+		Route::get('/catalogo', [GastoDirectoController::class, 'listarCatalogo']);
 	
 		// POST
 		Route::post('/', [GastoDirectoController::class, 'agregar']);

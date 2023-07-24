@@ -15,8 +15,8 @@ class GastoDirectoRH
    */
   public static function filtrosListar(Builder &$query, $filtros)
   {
-    if (!empty($filtros['catGastosDirectosIds'])) {
-      $query->whereIn('gd.cat_gasto_directo_id', $filtros['catGastosDirectosIds']);
+    if (!empty($filtros['gastosDirectosIds'])) {
+      $query->whereIn('gd.id', $filtros['gastosDirectosIds']);
     }
   }
 }

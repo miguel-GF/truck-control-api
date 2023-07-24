@@ -11,7 +11,22 @@ use Illuminate\Http\Request;
 class GastoDirectoController extends Controller
 {
 	/**
-	 * listar
+	 * listar catalogo
+	 *
+	 * @return mixed
+	 */
+	public function listarCatalogo()
+	{
+		try {
+			$gastos = GastoDirectoServiceData::listarCatalogo();
+			return ApiResponse::success("Datos obtenidos correctamente.", $gastos);
+		} catch (\Throwable $th) {
+			return ApiResponse::error($th->getMessage());
+		}
+	}
+
+	/**
+	 * listar general
 	 *
 	 * @param  mixed $request
 	 * @return mixed

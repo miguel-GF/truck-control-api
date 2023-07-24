@@ -11,7 +11,30 @@ use Exception;
 class GastoDirectoRepoData
 {
   /**
-   * listar
+   * listar catálogo de gastos directos
+   *
+   * @return array
+   */
+  public static function listarCatalogo(): array
+  {
+    try {
+      $query = DB::table('cat_gastos_directos')
+        ->select(
+          'id',
+          'clave',
+          'nombre',
+          'descripcion'
+        )
+        ->orderBy("clave");
+      return $query->get()->toArray();
+    } catch (QueryException $e) {
+      Log::error("Error de db en gastos directos catálogo -> $e");
+      throw new Exception("Error al listar gastos directos catálogo");
+    }
+  }
+
+  /**
+   * listar general
    *
    * @param  mixed $filtros
    * @return array
