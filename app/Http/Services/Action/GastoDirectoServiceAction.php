@@ -45,9 +45,9 @@ class GastoDirectoServiceAction
 	 * editar
 	 *
 	 * @param  mixed $datos
-	 * @return void
+	 * @return array
 	 */
-	public static function editar(array $datos)
+	public static function editar(array $datos): array
 	{
 		try {
 			$gasto = GastoDirecto::where('status', Constantes::ACTIVO_STATUS)->find($datos['id']);
@@ -58,7 +58,9 @@ class GastoDirectoServiceAction
 			DB::beginTransaction();
 			$update = GastoDirectoBO::armarUpdate($datos);
 			GastoDirectoRepoAction::actualizar($update, $datos['id']);
+			$update['id'] = $datos['id'];
 			DB::commit();
+			return $update;
 		} catch (\Throwable $th) {
 			DB::rollBack();
 			throw $th;
@@ -69,9 +71,9 @@ class GastoDirectoServiceAction
 	 * eliminar
 	 *
 	 * @param  mixed $datos
-	 * @return void
+	 * @return array
 	 */
-	public static function eliminar(array $datos)
+	public static function eliminar(array $datos): array
 	{
 		try {
 			$gasto = GastoDirecto::where('status', Constantes::INACTIVO_STATUS)->find($datos['id']);
@@ -82,7 +84,11 @@ class GastoDirectoServiceAction
 			DB::beginTransaction();
 			$update = HelperBO::armarDeleteGlobal($datos);
 			GastoDirectoRepoAction::actualizar($update, $datos['id']);
+			$gastoObj['status'] = $update['status'];
+			$gastoObj['status_nombre'] = "Eliminado";
+			$gastoObj['id'] = $datos['id'];
 			DB::commit();
+			return $gastoObj;
 		} catch (\Throwable $th) {
 			DB::rollBack();
 			throw $th;

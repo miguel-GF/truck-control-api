@@ -70,8 +70,8 @@ class GastoDirectoController extends Controller
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			GastoDirectoServiceAction::editar($params);
-			return ApiResponse::success("Gasto directo editado correctamente.");
+			$gastoDirecto = GastoDirectoServiceAction::editar($params);
+			return ApiResponse::success("Gasto directo editado correctamente.", $gastoDirecto);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
@@ -89,8 +89,8 @@ class GastoDirectoController extends Controller
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			GastoDirectoServiceAction::eliminar($params);
-			return ApiResponse::success("Gasto directo eliminado correctamente.");
+			$gastoDirecto = GastoDirectoServiceAction::eliminar($params);
+			return ApiResponse::success("Gasto directo eliminado correctamente.", $gastoDirecto);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}

@@ -47,6 +47,7 @@ class GastoDirectoBO
         'cantidad' => $datos['cantidad'],
         'precio' => $datos['precio'],
         'total' => $datos['total'],
+        'aplicacion_fecha' => $datos['aplicacionFecha'],
         'actualizacion_fecha' => DateUtil::now(),
       ];
     } catch (\Throwable $th) {
