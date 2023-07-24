@@ -8,6 +8,8 @@ use App\Http\Repos\Data\GastoDirectoRepoData;
 use App\Http\Services\BO\GastoDirectoBO;
 use App\Http\Services\BO\HelperBO;
 use App\Models\GastoDirecto;
+use App\Utils\LogUtil;
+use ErrorException;
 use Illuminate\Support\Facades\DB;
 use Exception;
 
@@ -22,16 +24,20 @@ class GastoDirectoServiceAction
 	public static function agregar(array $datos)
 	{
 		try {
+			DB::beginTransaction();
 			$max = GastoDirectoRepoData::obtenerMaximo();
 			$datos['folio'] = $max;
-			DB::beginTransaction();
 			$insert = GastoDirectoBO::armarInsert($datos);
 			$id = GastoDirectoRepoAction::agregar($insert);
+			$gastoDirecto = GastoDirectoRepoData::listar([
+				'gastosDirectosIds' => [$id]
+			])[0];
 			DB::commit();
-			return $id;
-		} catch (\Throwable $th) {
+			return $gastoDirecto;
+		} catch (ErrorException $e) {
 			DB::rollBack();
-			throw $th;
+			LogUtil::log("error", $e);
+			throw new Exception("Ocurrio un error al agregar gasto directo");
 		}
 	}
 	

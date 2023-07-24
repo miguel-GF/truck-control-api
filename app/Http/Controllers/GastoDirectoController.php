@@ -52,8 +52,8 @@ class GastoDirectoController extends Controller
 	{
 		try {
 			$params = $request->all();
-			$id = GastoDirectoServiceAction::agregar($params);
-			return ApiResponse::success("Gasto directo agregado correctamente.", $id);
+			$gastoDirecto = GastoDirectoServiceAction::agregar($params);
+			return ApiResponse::success("Gasto directo agregado correctamente.", $gastoDirecto);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
