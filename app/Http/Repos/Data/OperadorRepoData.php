@@ -46,14 +46,14 @@ class OperadorRepoData
   {
     try {
       $result = DB::table('operadores')
-        ->selectRaw("COALESCE(MAX(clave), 999) + 1 as maximo")
+        ->selectRaw("COALESCE(MAX(clave), 1000) + 1 as maximo")
         ->sharedLock()
         ->first()
         ;
         if ($result) {
           return $result->maximo;
         } else {
-            return 1000; // Si no hay registros, se devuelve 1 como valor predeterminado
+            return 1001; // Si no hay registros, se devuelve 1001 como valor predeterminado
         }
     } catch (QueryException $e) {
       Log::error("Error de db max en operadores -> $e");
