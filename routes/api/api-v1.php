@@ -53,6 +53,10 @@ Route::prefix('deducciones')->group(function () {
 });
 
 Route::prefix('nominas')->group(function () {
+	Route::prefix('operadores')->group(function () {
+		// GET
+		Route::get('/', [NominaController::class, 'listar']);
+	});
 	// GET
 	//Route::get('/', [OperadorController::class, 'listar']);
 
