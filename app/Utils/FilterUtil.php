@@ -1,8 +1,7 @@
 <?php
 
 namespace App\Utils;
-use Illuminate\Support\Facades\Log;
-use ErrorException;
+use Illuminate\Database\Query\Builder;
 
 class FilterUtil
 {
@@ -17,5 +16,19 @@ class FilterUtil
       $valor = explode(",", $valor);
     }
     return $valor;
+  }
+
+  public static function fechasFiltrosQuery(Builder &$query, $inicioColumna, $inicioFecha, $finColumna, $finFecha)
+  {
+    if (!empty($inicioFecha) && empty($finFecha)) {
+      $query->where($inicioColumna, '>=', $inicioFecha);
+    } else if (empty($inicioFecha) && !empty($finFecha)) {
+      $query->where($finColumna, '<=', $inicioFecha);
+    } else if (!empty($inicioFecha) && !empty($finFecha)) {
+      $query->where(function ($query) use ($inicioFecha, $finFecha, $inicioColumna, $finColumna) {
+          $query->whereBetween($inicioColumna, [$inicioFecha, $finFecha])
+              ->orWhereBetween($finColumna, [$inicioFecha, $finFecha]);
+      });
+    }
   }
 }
