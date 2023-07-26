@@ -80,39 +80,11 @@ class GastoDirectoRepoData
         if ($result) {
           return $result->maximo;
         } else {
-            return 1; // Si no hay registros, se devuelve 1 como valor predeterminado
+          return 1; // Si no hay registros, se devuelve 1 como valor predeterminado
         }
     } catch (QueryException $e) {
       Log::error("Error de db max en gastos directos -> $e");
       throw new Exception("Error al insertar gasto directo");
-    }
-  }
-
-  /**
-   * listar
-   *
-   * @param  mixed $filtros
-   * @return array
-   */
-  public static function listarGastosOperador(array $filtros): array
-  {
-    try {
-      $query = DB::table("operadores as o")
-      ->select(
-          "o.id",
-          "o.nombre",
-          DB::raw("(SELECT JSON_ARRAYAGG(JSON_OBJECT('id', gd.id, 'total', gd.total, 'aplicacion_fecha', gd.aplicacion_fecha))
-                    FROM gastos_directos as gd
-                    WHERE gd.operador_id = o.id AND gd.status = 200
-          ) as gastos_directos")
-      )
-      ->where("o.status", 200)
-      ->groupBy("o.id", "o.nombre");
-
-      return $query->get()->toArray();
-    } catch (QueryException $e) {
-      Log::error("Error de db en gastos directos operadores -> $e");
-      throw new Exception("Error al listar gastos directos operadores");
     }
   }
 }

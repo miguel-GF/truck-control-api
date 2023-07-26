@@ -3,16 +3,20 @@
 namespace App\Http\Services\Action;
 
 use App\Constants\Constantes;
+use App\Http\Repos\Action\DeduccionRepoAction;
+use App\Http\Repos\Action\GastoDirectoRepoAction;
 use App\Http\Repos\Action\NominaRepoAction;
 use App\Http\Repos\Data\GastoDirectoRepoData;
 use App\Http\Repos\Data\NominaRepoData;
 use App\Http\Services\BO\HelperBO;
 use App\Http\Services\BO\NominaBO;
+use App\Http\Services\Helper\NominaHelper;
 use App\Models\Nomina;
 use App\Utils\LogUtil;
 use ErrorException;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use Illuminate\Support\Facades\Log;
 
 class NominaServiceAction
 {
@@ -22,21 +26,37 @@ class NominaServiceAction
 	 * @param  mixed $datos
 	 * @return array
 	 */
-	public static function agregar(array $datos)
+	public static function agregar(array $datos): array
 	{
 		try {
+			NominaHelper::validarAgregarNominaOperador($datos);
+			DB::beginTransaction();
+
+			// obtener maximo de la tabla nominas
 			$max = NominaRepoData::obtenerMaximo();
 			$datos['folio'] = $max;
-			DB::beginTransaction();
+
+			// insert principal de nómina
 			$insert = NominaBO::armarInsert($datos);
 			$id = NominaRepoAction::agregar($insert);		
+
+			// Se agregan los detalles de nomina
 			self::agregarDetalles([
-				'nominaId' => $id
+				'nominaId' => $id,
+				'inicioFecha' => $datos['inicioFecha'],
+				'finFecha' => $datos['finFecha'],
 			]);
+
+			$insert['id'] = $id;
+			$insert['status_nombre'] = "Activo";
 			DB::commit();
-			return $id;
+			return $insert;
+		} catch (Exception $e) {
+			LogUtil::logException("error", new ErrorException ($e->getMessage()));
+			DB::rollBack();
+			throw $e;
 		} catch (ErrorException $e) {
-			LogUtil::log("error", $e);
+			LogUtil::logException("error", $e);
 			DB::rollBack();
 			throw $e;
 		}
@@ -51,7 +71,8 @@ class NominaServiceAction
 	public static function agregarDetalles(array $datos)
 	{
 		try {
-			$operadores = GastoDirectoRepoData::listarGastosOperador([]);
+			// obtenemos operadores con sus gastos y deducciones asociadas
+			$operadores = NominaRepoData::listarGastosDeduccionesOperador($datos);
 
 			if (empty($operadores)) {
 				throw new Exception("Debe existir al menos un operador");
@@ -61,10 +82,12 @@ class NominaServiceAction
 				self::agregarDetalleService([
 					'nominaId' => $datos['nominaId'],
 					'operadorId' => $operador->id,
+					'gastosDirectos' => $operador->gastos_directos,
+					'deducciones' => $operador->deducciones,
 				]);
 			}
-		} catch (ErrorException $e) {
-			LogUtil::log("error", $e);
+		} catch (Exception $e) {
+			LogUtil::logException("error", new ErrorException ($e->getMessage()));
 			throw $e;
 		}
 	}
@@ -72,16 +95,67 @@ class NominaServiceAction
 	/**
 	 * agregarDetalleService
 	 *
-	 * @param  mixed $datos [nominaId, operadorId]
+	 * @param  mixed $datos [nominaId, operadorId, gastosDirectos]
 	 * @return void
 	 */
 	public static function agregarDetalleService(array $datos)
 	{
 		try {
+			// Tratamos los gastos directos y deducciones
+			$totales = NominaBO::tratarTotalesGastosDeducciones($datos);
+			$gastosDirectosIds = $totales['gastosDirectosIds'];
+			$deduccionesIds = $totales['deduccionesIds'];
+			
+			unset($totales['gastosDirectosIds']);
+			unset($totales['deduccionesIds']);
+			
+			$datos = array_merge($datos, $totales);
+			
+			// Se arma insert detalle y se agrega
 			$insert = NominaBO::armarInsertDetalle($datos);
-			NominaRepoAction::agregarDetalle($insert);
-		} catch (ErrorException $e) {
-			LogUtil::log("error", $e);
+			$detalleNominaId = NominaRepoAction::agregarDetalle($insert);
+			
+			// Se agregan las nominas ids en gastos
+			self::asociarGastosDirectosNomina([
+				'nominaId' => $datos['nominaId'],
+				'detalleNominaId' => $detalleNominaId,
+				'gastosDirectosIds' => $gastosDirectosIds,
+			]);
+			
+			// Se agregan las nominas ids en deducciones
+			self::asociarDeduccionesNomina([
+				'nominaId' => $datos['nominaId'],
+				'detalleNominaId' => $detalleNominaId,
+				'deduccionesIds' => $deduccionesIds,
+			]);
+		} catch (Exception $e) {
+			LogUtil::logException("error", new ErrorException ($e->getMessage()));
+			throw $e;
+		}
+	}
+
+	public static function asociarGastosDirectosNomina(array $datos)
+	{
+		try {
+			foreach ($datos['gastosDirectosIds'] as $gastoDirectoId) {
+				$update = NominaBO::armarUpdateAsociarGastoDeduccion($datos);
+				GastoDirectoRepoAction::actualizar($update, $gastoDirectoId);
+			}
+		} catch (Exception $e) {
+			LogUtil::logException("error", new ErrorException ($e->getMessage()));
+			throw $e;
+		}
+	}
+
+	public static function asociarDeduccionesNomina(array $datos)
+	{
+		try {
+			foreach ($datos['deduccionesIds'] as $deduccionId) {
+				$update = NominaBO::armarUpdateAsociarGastoDeduccion($datos);
+				DeduccionRepoAction::actualizar($update, $deduccionId);
+			}
+		} catch (Exception $e) {
+			LogUtil::logException("error", new ErrorException ($e->getMessage()));
 			throw $e;
 		}
 	}

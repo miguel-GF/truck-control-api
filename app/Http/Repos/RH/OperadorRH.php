@@ -54,7 +54,7 @@ class OperadorRH
           break;
       }
     } catch (ErrorException $e) {
-      LogUtil::log("error", $e);
+      LogUtil::logException("error", $e);
       throw $e;
     }
   }
