@@ -10,7 +10,7 @@ class LogUtil
    * Método para agregar linea de log
    * @return void
    */
-  public static function log(string $tipo, ErrorException $e)
+  public static function logException(string $tipo, ErrorException $e)
   {
     $message = $e->getMessage();
     $fila = $e->getFile();

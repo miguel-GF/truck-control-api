@@ -25,9 +25,10 @@ class OperadorServiceAction
 	public static function agregar(array $datos)
 	{
 		try {
+			DB::beginTransaction();
+			
 			$max = OperadorRepoData::obtenerMaximo();
 			$datos['clave'] = $max;
-			DB::beginTransaction();
 			
 			$insert = OperadorBO::armarInsert($datos);
 			$id = OperadorRepoAction::agregar($insert);			
@@ -39,7 +40,7 @@ class OperadorServiceAction
 			return $insert;
 		} catch (ErrorException $e) {
 			DB::rollBack();
-			LogUtil::log("error", $e);
+			LogUtil::logException("error", $e);
 			throw new Exception("Ocurrio un error al agregar operador");
 		}
 	}
@@ -71,7 +72,7 @@ class OperadorServiceAction
 			return $operador;
 		} catch (ErrorException $e) {
 			DB::rollBack();
-			LogUtil::log("error", $e);
+			LogUtil::logException("error", $e);
 			throw new Exception("Ocurrio un error al editar operador");
 		}
 	}
@@ -101,7 +102,7 @@ class OperadorServiceAction
 			return $operador;
 		} catch (ErrorException $e) {
 			DB::rollBack();
-			LogUtil::log("error", $e);
+			LogUtil::logException("error", $e);
 			throw new Exception("Ocurrio un error al eliminar operador");
 		}
 	}

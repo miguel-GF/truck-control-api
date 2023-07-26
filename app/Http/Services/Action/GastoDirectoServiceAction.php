@@ -36,7 +36,7 @@ class GastoDirectoServiceAction
 			return $gastoDirecto;
 		} catch (ErrorException $e) {
 			DB::rollBack();
-			LogUtil::log("error", $e);
+			LogUtil::logException("error", $e);
 			throw new Exception("Ocurrio un error al agregar gasto directo");
 		}
 	}
