@@ -17,15 +17,15 @@ return new class extends Migration
             $table->id();  
             $table->integer('folio');
             $table->integer('status');
-            $table->string('serie_folio');
+            $table->string('serie_folio', 10);
             $table->date('inicio_fecha');
             $table->date('fin_fecha');
             $table->double('total_gastos');
             $table->double('total_deducciones');
             $table->double('total');
-            $table->string('registro_autor_id')->nullable();
+            $table->integer('registro_autor_id')->nullable();
             $table->timestamp('registro_fecha');
-            $table->string('actualizacion_autor_id')->nullable();
+            $table->integer('actualizacion_autor_id')->nullable();
             $table->timestamp('actualizacion_fecha')->nullable();
         });
     }

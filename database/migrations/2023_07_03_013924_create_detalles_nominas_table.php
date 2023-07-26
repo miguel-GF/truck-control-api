@@ -21,9 +21,9 @@ return new class extends Migration
             $table->double('total_deducciones');
             $table->double('total');
             $table->integer('status');
-            $table->string('registro_autor_id')->nullable();
+            $table->integer('registro_autor_id')->nullable();
             $table->timestamp('registro_fecha');
-            $table->string('actualizacion_autor_id')->nullable();
+            $table->integer('actualizacion_autor_id')->nullable();
             $table->timestamp('actualizacion_fecha')->nullable();            
         });
     }

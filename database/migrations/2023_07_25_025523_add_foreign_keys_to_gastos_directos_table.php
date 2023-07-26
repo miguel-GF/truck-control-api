@@ -12,6 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('gastos_directos', function (Blueprint $table) {
+            $table->text('comentario')->nullable();
             // Agregar nuevas columnas como llaves foráneas
             $table->unsignedBigInteger('nomina_id')->nullable();
             $table->unsignedBigInteger('detalle_nomina_id')->nullable();
@@ -26,6 +27,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('gastos_directos', function (Blueprint $table) {
+            $table->text('comentario')->nullable();
             $table->dropForeign(['nomina_id']);
             $table->dropColumn('nomina_id');
             $table->dropForeign(['detalle_nomina_id']);

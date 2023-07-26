@@ -15,9 +15,9 @@ return new class extends Migration
     {
         Schema::create('cat_gastos_directos', function (Blueprint $table) {
             $table->id();
-            $table->string('clave');
-            $table->string('nombre');
-            $table->string('descripcion');
+            $table->string('clave', 10);
+            $table->string('nombre', 120);
+            $table->text('descripcion');
             $table->timestamps();
         });
     }

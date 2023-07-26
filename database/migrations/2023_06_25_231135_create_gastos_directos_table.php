@@ -22,10 +22,10 @@ return new class extends Migration
             $table->double('total');
             $table->integer('folio');
             $table->integer('status');
-            $table->string('serie_folio');
-            $table->string('registro_autor_id')->nullable();
+            $table->string('serie_folio', 10);
+            $table->integer('registro_autor_id')->nullable();
             $table->timestamp('registro_fecha');
-            $table->string('actualizacion_autor_id')->nullable();
+            $table->integer('actualizacion_autor_id')->nullable();
             $table->timestamp('actualizacion_fecha')->nullable();
             $table->date('aplicacion_fecha');
             // Llaves foráneas
