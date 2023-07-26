@@ -18,12 +18,12 @@ class FilterUtil
     return $valor;
   }
 
-  public static function fechasFiltrosQuery(Builder &$query, $inicioColumna, $inicioFecha, $finColumna, $finFecha)
+  public static function dobleFechaFiltrosQuery(Builder &$query, $inicioColumna, $inicioFecha, $finColumna, $finFecha)
   {
     if (!empty($inicioFecha) && empty($finFecha)) {
       $query->where($inicioColumna, '>=', $inicioFecha);
     } else if (empty($inicioFecha) && !empty($finFecha)) {
-      $query->where($finColumna, '<=', $inicioFecha);
+      $query->where($finColumna, '<=', $finFecha);
     } else if (!empty($inicioFecha) && !empty($finFecha)) {
       $query->where(function ($query) use ($inicioFecha, $finFecha, $inicioColumna, $finColumna) {
           $query->whereBetween($inicioColumna, [$inicioFecha, $finFecha])
