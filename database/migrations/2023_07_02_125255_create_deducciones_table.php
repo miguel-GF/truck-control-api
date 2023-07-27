@@ -22,7 +22,7 @@ return new class extends Migration
             $table->double('total');
             $table->integer('folio');
             $table->integer('status');
-            $table->string('serie_folio', 15);
+            $table->string('serie_folio', 10);
             $table->integer('registro_autor_id')->nullable();
             $table->timestamp('registro_fecha');
             $table->integer('actualizacion_autor_id')->nullable();
