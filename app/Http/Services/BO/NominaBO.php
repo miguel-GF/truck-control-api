@@ -22,7 +22,7 @@ class NominaBO
       return [
         'folio' => $datos['folio'],
         'status' => Constantes::ACTIVO_STATUS, 
-        'serie_folio' => "DE" . StringUtil::cadenaPadding($datos['folio'], "0", 4),
+        'serie_folio' => "NO" . StringUtil::cadenaPadding($datos['folio'], "0", 4),
         'inicio_fecha' => $datos['inicioFecha'],
         'fin_fecha' => $datos['finFecha'],
         'total_gastos' => 0,
@@ -63,6 +63,27 @@ class NominaBO
   }
 
   /**
+   * armarUpdateDetalleRecalculo
+   *
+   * @param  mixed $datos
+   * @return array
+   */
+  public static function armarUpdateDetalleRecalculo(array $datos): array
+  {
+    try {
+      return [
+        'total_gastos' => $datos['totalGastos'],
+        'total_deducciones' => $datos['totalDeducciones'],
+        'total' => $datos['total'],
+        //'actualizacion' => "",
+        'actualizacion_fecha' => DateUtil::now(),
+      ];
+    } catch (\Throwable $th) {
+      throw $th;
+    }
+  }
+
+  /**
    * armarUpdate
    *
    * @param  mixed $datos
@@ -81,7 +102,7 @@ class NominaBO
   }
 
     /**
-   * armarUpdateAsociarGastoDeduccion
+   * tratarTotalesGastosDeducciones
    *
    * @param  mixed $datos
    * @return array $totales
@@ -150,6 +171,24 @@ class NominaBO
       $update = (array) $totales;
       $update['actualizacion_fecha'] = $actualizacionFecha;
       return $update;
+    } catch (\Throwable $th) {
+      throw $th;
+    }
+  }
+
+  /**
+   * armarUpdateLiberarGastoDeduccion
+   *
+   * @return array
+   */
+  public static function armarUpdateLiberarGastoDeduccion(): array
+  {
+    try {
+      return [
+        'nomina_id' => null,
+        'detalle_nomina_id' => null,
+        'actualizacion_fecha' => DateUtil::now(),
+      ];
     } catch (\Throwable $th) {
       throw $th;
     }

@@ -38,6 +38,29 @@ class NominaRepoData
   }
 
   /**
+   * listarDetallesNomina
+   *
+   * @param  mixed $filtros
+   * @return array
+   */
+  public static function listarDetallesNomina(array $filtros): array
+  {
+    try {
+      $query = DB::table('detalles_nominas as dn')
+        ->select(
+          'dn.*',
+        )
+        ->selectRaw("CONCAT(o.nombre,' ',o.apellidos) as nombre_operador")
+        ->join("operadores as o", "o.id", "dn.operador_id");
+      NominaRH::filtrosListarDetalles($query, $filtros);
+      return $query->get()->toArray();
+    } catch (QueryException $e) {
+      Log::error("Error de db en detalles nominas -> $e");
+      throw new Exception("Error al listar detalles nominas");
+    }
+  }
+
+  /**
    * listar
    *
    * @param  mixed $filtros
@@ -110,8 +133,8 @@ class NominaRepoData
           ) as deducciones")
       )
       ->where("o.status", 200)
-      ->when(isset($filtros['operadorId']), function ($query) use ($filtros) {
-        return $query->whereRaw("o.id = {$filtros['operadorId']}");
+      ->when(isset($filtros['operadoresIds']), function ($query) use ($filtros) {
+        return $query->whereIn("o.id", $filtros['operadoresIds']);
       })
       ->groupBy("o.id", "o.nombre");
 

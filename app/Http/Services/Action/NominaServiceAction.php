@@ -6,12 +6,12 @@ use App\Constants\Constantes;
 use App\Http\Repos\Action\DeduccionRepoAction;
 use App\Http\Repos\Action\GastoDirectoRepoAction;
 use App\Http\Repos\Action\NominaRepoAction;
-use App\Http\Repos\Data\GastoDirectoRepoData;
 use App\Http\Repos\Data\NominaRepoData;
 use App\Http\Services\BO\HelperBO;
 use App\Http\Services\BO\NominaBO;
 use App\Http\Services\Helper\NominaHelper;
 use App\Models\Nomina;
+use App\Utils\DateUtil;
 use App\Utils\LogUtil;
 use ErrorException;
 use Illuminate\Support\Facades\DB;
@@ -105,7 +105,7 @@ class NominaServiceAction
 	 * @param  mixed $datos [nominaId, operadorId, gastosDirectos, deducciones]
 	 * @return void
 	 */
-	public static function agregarDetalleService(array $datos)
+	public static function agregarDetalleService(array $datos, $esAlta = true, $detalleNominaId = null)
 	{
 		try {
 			// Tratamos los gastos directos y deducciones
@@ -118,9 +118,14 @@ class NominaServiceAction
 			
 			$datos = array_merge($datos, $totales);
 			
-			// Se arma insert detalle y se agrega
-			$insert = NominaBO::armarInsertDetalle($datos);
-			$detalleNominaId = NominaRepoAction::agregarDetalle($insert);
+			// Se arma insert detalle y se agrega caso contrario solo se actualiza
+			if ($esAlta) {
+				$insert = NominaBO::armarInsertDetalle($datos);
+				$detalleNominaId = NominaRepoAction::agregarDetalle($insert);
+			} else {
+				$updateDetalle = NominaBO::armarUpdateDetalleRecalculo($datos);
+				NominaRepoAction::actualizarDetalle($updateDetalle, $detalleNominaId);
+			}
 			
 			// Se agregan las nominas ids en gastos
 			self::asociarGastosDirectosNomina([
@@ -230,6 +235,97 @@ class NominaServiceAction
 			$update = NominaBO::armarUpdateTotales($datos, $totales);
 			NominaRepoAction::actualizar($update, $datos['nominaId']);
 			return $totales;
+		} catch (Exception $e) {
+			LogUtil::logException("error", new ErrorException ($e->getMessage()));
+			throw $e;
+		}
+	}
+
+	/**
+	 * recalcularNomina
+	 *
+	 * @param  mixed $datos [id]
+	 * @return void
+	 */
+	public static function recalcularNomina(array $datos): void
+	{
+		try {
+			DB::beginTransaction();
+
+			// Liberamos gastos y deducciones
+			self::liberarGastosDirectosService(["nominaId" => $datos["id"]]);
+			self::liberarDeduccionesService(["nominaId" => $datos["id"]]);
+			
+			// Obtenemos detalles de nomina y operadores asociados id
+			$detallesNomina = NominaRepoData::listarDetallesNomina(["nominaId" => $datos["id"]]);
+			$operadoresIds = collect($detallesNomina)->pluck("operador_id")->toArray();
+			$nomina = NominaRepoData::listar(["nominaId" => $datos["id"]])[0];
+			
+			// Obtenemos operadores con sus gastos y deducciones asociadas
+			$operadores = NominaRepoData::listarGastosDeduccionesOperador([
+				"inicioFecha" => $nomina->inicio_fecha,
+				"finFecha" => $nomina->fin_fecha,
+				"operadoresIds" => $operadoresIds,
+			]);
+
+			// Actualizamos detalles
+			foreach ($operadores as $operador) {
+				$detalleNominaId = current(array_filter($detallesNomina, function ($dn) use ($operador) {
+					return $dn->operador_id == $operador->id;
+				}))->id;
+				self::agregarDetalleService([
+					'nominaId' => $datos['id'],
+					'operadorId' => $operador->id,
+					'gastosDirectos' => $operador->gastos_directos,
+					'deducciones' => $operador->deducciones,
+				],
+				false,
+				$detalleNominaId
+				);
+			}
+
+			// calculamos sus nuevos totales
+			self::calcularTotalesNominaService([
+				'nominaId' => $datos['id'],
+				'esAlta' => 'no',
+			]);
+
+			DB::commit();
+		} catch (Exception $e) {
+			LogUtil::logException("error", new ErrorException ($e->getMessage()));
+			DB::rollBack();
+			throw $e;
+		}
+	}
+	
+	/**
+	 * liberarGastosDirectosService
+	 *
+	 * @param  mixed $datos [nominaId]
+	 * @return void
+	 */
+	public static function liberarGastosDirectosService(array $datos)
+	{
+		try {
+			$update = NominaBO::armarUpdateLiberarGastoDeduccion();
+			NominaRepoAction::liberarGastosDeducciones($update, $datos["nominaId"], "gastos_directos");
+		} catch (Exception $e) {
+			LogUtil::logException("error", new ErrorException ($e->getMessage()));
+			throw $e;
+		}
+	}
+
+	/**
+	 * liberarDeduccionesService
+	 *
+	 * @param  mixed $datos [nominaId]
+	 * @return void
+	 */
+	public static function liberarDeduccionesService(array $datos)
+	{
+		try {
+			$update = NominaBO::armarUpdateLiberarGastoDeduccion();
+			NominaRepoAction::liberarGastosDeducciones($update, $datos["nominaId"], "deducciones");
 		} catch (Exception $e) {
 			LogUtil::logException("error", new ErrorException ($e->getMessage()));
 			throw $e;

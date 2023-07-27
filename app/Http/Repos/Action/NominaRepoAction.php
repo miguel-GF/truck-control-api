@@ -61,4 +61,41 @@ class NominaRepoAction
       throw new Exception("Error al actualizar nomina");
     }
   }
+
+  /**
+   * liberarGastosDeducciones
+   *
+   * @param  mixed $update
+   * @return mixed
+   */
+  public static function liberarGastosDeducciones(array $update, $nominaId, $table)
+  {
+    try {
+      return DB::table($table)
+        ->where('nomina_id', $nominaId)
+        ->update($update);
+    } catch (QueryException $e) {
+      Log::error("Error de update en $table por liberar ids nomina -> $e");
+      throw new Exception("Error al liberar $table");
+    }
+  }
+
+  /**
+   * actualizarDetalleRecalculo
+   *
+   * @param  mixed $update
+   * @param  mixed $detalleNominaId
+   * @return void
+   */
+  public static function actualizarDetalle(array $update, $detalleNominaId)
+  {
+    try {
+      DB::table("detalles_nominas")
+        ->where('id', $detalleNominaId)
+        ->update($update);
+    } catch (QueryException $e) {
+      Log::error("Error de update en actualizar detalle nomina por recalculo -> $e");
+      throw new Exception("Error al liberar actualizar detalle nomina por recalculo");
+    }
+  }
 }

@@ -39,4 +39,23 @@ class NominaRH
       throw $e;
     }
   }
+
+  /**
+   * filtrosListar
+   *
+   * @param  mixed $query
+   * @param  mixed $filtros
+   * @return void
+   */
+  public static function filtrosListarDetalles(Builder &$query, $filtros)
+  {
+    try {
+      if (!empty($filtros['nominaId'])) {
+        $query->where('dn.nomina_id', $filtros['nominaId']);
+      }
+    } catch (ErrorException $e) {
+      LogUtil::logException("error", $e);
+      throw $e;
+    }
+  }
 }
