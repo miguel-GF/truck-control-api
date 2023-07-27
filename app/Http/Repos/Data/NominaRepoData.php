@@ -38,6 +38,28 @@ class NominaRepoData
   }
 
   /**
+   * listar
+   *
+   * @param  mixed $filtros
+   * @return \stdClass
+   */
+  public static function obtenerTotalNomina(array $filtros): \stdClass
+  {
+    try {
+      $query = DB::table('detalles_nominas as dn')
+        ->selectRaw('SUM(dn.total_gastos) as total_gastos')
+        ->selectRaw('SUM(dn.total_deducciones) as total_deducciones')
+        ->selectRaw('SUM(dn.total) as total')
+        ->where("dn.nomina_id", $filtros['nominaId']);
+
+      return $query->get()->first();
+    } catch (QueryException $e) {
+      Log::error("Error de db en obtene total nomina -> $e");
+      throw new Exception("Error al obtener total nomina");
+    }
+  }
+
+  /**
    * obtenerMaximo
    *
    * @return mixed

@@ -5,6 +5,7 @@ namespace App\Http\Services\BO;
 use App\Constants\Constantes;
 use App\Utils\DateUtil;
 use App\Utils\StringUtil;
+use stdClass;
 
 class NominaBO
 {
@@ -103,7 +104,7 @@ class NominaBO
 			$totales['deduccionesIds'] = [];
       if (!empty($datos['deducciones'])) {
         $deducciones = collect(json_decode($datos['deducciones']));
-        $totalGastos = $deducciones->sum('total');
+        $totalDeducciones = $deducciones->sum('total');
 				$totales['deduccionesIds'] = $deducciones->pluck('id')->toArray();
       }
 			$totales['totalDeducciones'] = $totalDeducciones;
@@ -130,6 +131,25 @@ class NominaBO
         'detalle_nomina_id' => $datos['detalleNominaId'],
         'actualizacion_fecha' => DateUtil::now(),
       ];
+    } catch (\Throwable $th) {
+      throw $th;
+    }
+  }
+
+  /**
+   * armarUpdateTotales
+   *
+   * @param  mixed $datos [esAlta]
+   * @param  mixed $totales
+   * @return array
+   */
+  public static function armarUpdateTotales(array $datos, stdClass $totales): array
+  {
+    try {
+      $actualizacionFecha = $datos['esAlta'] == 'si' ? null : DateUtil::now();
+      $update = (array) $totales;
+      $update['actualizacion_fecha'] = $actualizacionFecha;
+      return $update;
     } catch (\Throwable $th) {
       throw $th;
     }

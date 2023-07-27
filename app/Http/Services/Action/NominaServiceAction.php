@@ -17,6 +17,7 @@ use ErrorException;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
+use stdClass;
 
 class NominaServiceAction
 {
@@ -47,8 +48,14 @@ class NominaServiceAction
 				'finFecha' => $datos['finFecha'],
 			]);
 
+			$totales = self::calcularTotalesNominaService([
+				'nominaId' => $id,
+				'esAlta' => 'si',
+			]);
+
 			$insert['id'] = $id;
 			$insert['status_nombre'] = "Activo";
+			$insert = array_merge($insert, (array) $totales);
 			DB::commit();
 			return $insert;
 		} catch (Exception $e) {
@@ -95,7 +102,7 @@ class NominaServiceAction
 	/**
 	 * agregarDetalleService
 	 *
-	 * @param  mixed $datos [nominaId, operadorId, gastosDirectos]
+	 * @param  mixed $datos [nominaId, operadorId, gastosDirectos, deducciones]
 	 * @return void
 	 */
 	public static function agregarDetalleService(array $datos)
@@ -205,6 +212,27 @@ class NominaServiceAction
 		} catch (\Throwable $th) {
 			DB::rollBack();
 			throw $th;
+		}
+	}
+
+	/**
+	 * calcularTotalesNominaService
+	 *
+	 * @param  mixed $datos [nominaId, esAlta]
+	 * @return stdClass
+	 */
+	public static function calcularTotalesNominaService(array $datos): stdClass
+	{
+		try {
+			$totales = NominaRepoData::obtenerTotalNomina([
+				'nominaId' => $datos['nominaId']
+			]);
+			$update = NominaBO::armarUpdateTotales($datos, $totales);
+			NominaRepoAction::actualizar($update, $datos['nominaId']);
+			return $totales;
+		} catch (Exception $e) {
+			LogUtil::logException("error", new ErrorException ($e->getMessage()));
+			throw $e;
 		}
 	}
 }
