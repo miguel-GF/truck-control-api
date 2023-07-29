@@ -56,12 +56,11 @@ Route::prefix('nominas')->group(function () {
 	Route::prefix('operadores')->group(function () {
 		// GET
 		Route::get('/', [NominaController::class, 'listar']);
+		Route::get('/{id}', [NominaController::class, 'obtenerDetalle']);
 		
-		// POST
-		Route::post('/', [NominaController::class, 'agregar']);
+		// PATCH
+		Route::patch('/recalcular/{id}', [NominaController::class, 'recalcularNomina']);
 	});
-	// GET
-	//Route::get('/', [OperadorController::class, 'listar']);
 
 
 	// PATCH

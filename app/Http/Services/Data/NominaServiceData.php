@@ -3,6 +3,7 @@
 namespace App\Http\Services\Data;
 
 use App\Http\Repos\Data\NominaRepoData;
+use stdClass;
 
 class NominaServiceData
 {
@@ -16,6 +17,27 @@ class NominaServiceData
 	{
 		try {
 			return NominaRepoData::listar($filtros);
+		} catch (\Throwable $th) {
+			throw $th;
+		}
+	}
+
+	/**
+	 * obtenerDetalle
+	 *
+	 * @param  mixed $filtros
+	 * @return stdClass
+	 */
+	public static function obtenerDetalle(array $filtros): stdClass
+	{
+		try {
+			$detalle = new stdClass();
+			$nomina = NominaRepoData::listar($filtros)[0];
+			$detalles = NominaRepoData::listarDetallesNomina($filtros);
+
+			$detalle->datosPrincipales = $nomina;
+			$detalle->detalles = $detalles;
+			return $detalle;
 		} catch (\Throwable $th) {
 			throw $th;
 		}
