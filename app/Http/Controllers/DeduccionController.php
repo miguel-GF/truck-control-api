@@ -28,6 +28,21 @@ class DeduccionController extends Controller
 	}
 
 	/**
+	 * listarCatalogoo
+	 *
+	 * @return mixed
+	 */
+	public function listarCatalogo()
+	{
+		try {
+			$deducciones = DeduccionServiceData::listarCatalogo();
+			return ApiResponse::success("Datos obtenidos correctamente.", $deducciones);
+		} catch (\Throwable $th) {
+			return ApiResponse::error($th->getMessage());
+		}
+	}
+
+	/**
 	 * agregar
 	 *
 	 * @param  mixed $request
@@ -37,8 +52,8 @@ class DeduccionController extends Controller
 	{
 		try {
 			$params = $request->all();
-			$id = DeduccionServiceAction::agregar($params);
-			return ApiResponse::success("Deduccion agregado correctamente.", $id);
+			$deduccion = DeduccionServiceAction::agregar($params);
+			return ApiResponse::success("Deduccion agregado correctamente.", $deduccion);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
@@ -55,8 +70,8 @@ class DeduccionController extends Controller
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			DeduccionServiceAction::editar($params);
-			return ApiResponse::success("Deduccion editado correctamente.");
+			$deduccion = DeduccionServiceAction::editar($params);
+			return ApiResponse::success("Deduccion editado correctamente.", $deduccion);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
@@ -74,8 +89,8 @@ class DeduccionController extends Controller
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			DeduccionServiceAction::eliminar($params);
-			return ApiResponse::success("Gasto directo eliminado correctamente.");
+			$deduccion = DeduccionServiceAction::eliminar($params);
+			return ApiResponse::success("Deducción eliminada correctamente.", $deduccion);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
