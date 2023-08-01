@@ -15,8 +15,8 @@ class DeduccionRH
    */
   public static function filtrosListar(Builder &$query, $filtros)
   {
-    if (!empty($filtros['catDeduccionesIds'])) {
-      $query->whereIn('cat_deduccion_id', $filtros['catDeduccionesIds']);
+    if (!empty($filtros['deduccionesIds'])) {
+      $query->whereIn('d.id', $filtros['deduccionesIds']);
     }
   }
 }

@@ -41,6 +41,7 @@ Route::prefix('gastos')->group(function () {
 Route::prefix('deducciones')->group(function () {
 	// GET
 	Route::get('/', [DeduccionController::class, 'listar']);
+	Route::get('/catalogo', [DeduccionController::class, 'listarCatalogo']);
 	
 	// POST
 	Route::post('/', [DeduccionController::class, 'agregar']);

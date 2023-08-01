@@ -12,6 +12,29 @@ use Exception;
 class DeduccionRepoData
 {
   /**
+   * listar catálogo de deducciones
+   *
+   * @return array
+   */
+  public static function listarCatalogo(): array
+  {
+    try {
+      $query = DB::table('cat_deducciones')
+        ->select(
+          'id',
+          'clave',
+          'nombre',
+          'descripcion'
+        )
+        ->orderBy("clave");
+      return $query->get()->toArray();
+    } catch (QueryException $e) {
+      Log::error("Error de db en deducciones catálogo -> $e");
+      throw new Exception("Error al listar deducciones catálogo");
+    }
+  }
+
+  /**
    * listar
    *
    * @param  mixed $filtros
@@ -20,8 +43,20 @@ class DeduccionRepoData
   public static function listar(array $filtros): array
   {
     try {
-      $query = DB::table('deducciones')
-        ->select('*');
+      $query = DB::table('deducciones as d')
+        ->select(
+          'd.*',
+          DB::raw("CASE
+            WHEN d.status = 200 THEN 'Activo'
+            WHEN d.status = 300 THEN 'Eliminado'
+            ELSE 'Sin definir'
+          END as status_nombre"),
+          DB::raw("CONCAT(o.nombre,' ',o.apellidos) as nombre_operador"),
+          'cd.nombre as nombre_deduccion'
+        )
+        ->join('operadores as o', 'o.id', 'd.operador_id')
+        ->join('cat_deducciones as cd', 'cd.id', 'd.cat_deduccion_id')
+        ;
       DeduccionRH::filtrosListar($query, (array) $filtros);
       return $query->get()->toArray();
     } catch (QueryException $e) {
@@ -49,7 +84,7 @@ class DeduccionRepoData
             return 1; // Si no hay registros, se devuelve 1 como valor predeterminado
         }
     } catch (QueryException $e) {
-      Log::error("Error de db max en deduciones -> $e");
+      Log::error("Error de db max en deducciones -> $e");
       throw new Exception("Error al insertar deduccion");
     }
   }

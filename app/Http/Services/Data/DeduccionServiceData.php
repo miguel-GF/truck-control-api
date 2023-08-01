@@ -20,4 +20,19 @@ class DeduccionServiceData
 			throw $th;
 		}
 	}
+
+	/**
+	 * listarCatalogo
+	 *
+	 * @param  mixed $filtros
+	 * @return array
+	 */
+	public static function listarCatalogo(): array
+	{
+		try {
+			return DeduccionRepoData::listarCatalogo();
+		} catch (\Throwable $th) {
+			throw $th;
+		}
+	}
 }
