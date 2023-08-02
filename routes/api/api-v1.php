@@ -59,6 +59,9 @@ Route::prefix('nominas')->group(function () {
 		Route::get('/', [NominaController::class, 'listar']);
 		Route::get('/{id}', [NominaController::class, 'obtenerDetalle']);
 		
+		// POST
+		Route::post('/', [NominaController::class, 'agregar']);
+
 		// PATCH
 		Route::patch('/recalcular/{id}', [NominaController::class, 'recalcularNomina']);
 	});
