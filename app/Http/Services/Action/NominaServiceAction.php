@@ -178,7 +178,7 @@ class NominaServiceAction
 	 * @param  mixed $datos
 	 * @return void
 	 */
-	public static function editar(array $datos)
+	public static function cerrarNomina(array $datos)
 	{
 		try {
 			$operador = Nomina::where('status', Constantes::ACTIVO_STATUS)->find($datos['id']);
@@ -187,7 +187,7 @@ class NominaServiceAction
 				throw new Exception('Nomina no encontrado');
 			}
 			DB::beginTransaction();
-			$update = NominaBO::armarUpdate($datos);
+			$update = NominaBO::armarUpdateStatus($datos);
 			NominaRepoAction::actualizar($update, $datos['id']);
 			DB::commit();
 		} catch (\Throwable $th) {
@@ -200,9 +200,9 @@ class NominaServiceAction
 	 * eliminar
 	 *
 	 * @param  mixed $datos
-	 * @return void
+	 * @return array
 	 */
-	public static function eliminar(array $datos)
+	public static function eliminar(array $datos): array
 	{
 		try {
 			$nomina = Nomina::where('status', Constantes::INACTIVO_STATUS)->find($datos['id']);
@@ -211,9 +211,20 @@ class NominaServiceAction
 				throw new Exception('Nomina ya fue eliminado anteriormente');
 			}
 			DB::beginTransaction();
+
+			// Actualizamos status de nomina
 			$update = HelperBO::armarDeleteGlobal($datos);
 			NominaRepoAction::actualizar($update, $datos['id']);
+			$nominaOperadorObj['id'] = $datos['id'];
+			$nominaOperadorObj['status'] = $update['status'];
+			$nominaOperadorObj['status_nombre'] = "Eliminado";
+
+			// Liberamos gastos y deducciones
+			self::liberarGastosDirectosService(["nominaId" => $datos["id"]]);
+			self::liberarDeduccionesService(["nominaId" => $datos["id"]]);
+			
 			DB::commit();
+			return $nominaOperadorObj;
 		} catch (\Throwable $th) {
 			DB::rollBack();
 			throw $th;

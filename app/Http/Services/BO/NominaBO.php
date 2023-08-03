@@ -84,12 +84,12 @@ class NominaBO
   }
 
   /**
-   * armarUpdate
+   * armarUpdateStatus
    *
    * @param  mixed $datos
    * @return array
    */
-  public static function armarUpdate(array $datos): array
+  public static function armarUpdateStatus(array $datos): array
   {
     try {
       return [

@@ -64,12 +64,14 @@ Route::prefix('nominas')->group(function () {
 
 		// PATCH
 		Route::patch('/recalcular/{id}', [NominaController::class, 'recalcularNomina']);
+		Route::patch('/cerrar/{id}', [NominaController::class, 'cerrarNomina']);
+		
+		// DELETE
+		Route::delete('/{id}', [NominaController::class, 'eliminar']);
 	});
 
 
 	// PATCH
 	//Route::patch('/{id}', [OperadorController::class, 'editar']);
 	
-	// DELETE
-	//Route::delete('/{id}', [OperadorController::class, 'eliminar']);
 });

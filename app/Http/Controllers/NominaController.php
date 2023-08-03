@@ -33,10 +33,11 @@ class NominaController extends Controller
 	 * @param  mixed $request
 	 * @return mixed
 	 */
-	public function obtenerDetalle(Request $request)
+	public function obtenerDetalle(Request $request, $id)
 	{
 		try {
 			$params = $request->all();
+			$params['nominaId'] = $id;
 			$detalle = NominaServiceData::obtenerDetalle($params);
 			return ApiResponse::success("Detalle obtenido correctamente.", $detalle);
 		} catch (\Throwable $th) {
@@ -61,19 +62,19 @@ class NominaController extends Controller
 		}
 	}
 	/**
-	 * editar
+	 * cerrarNomina
 	 *
 	 * @param  mixed $request
 	 * @param  mixed $id
 	 * @return void
 	 */
-	public function editar(NominaRequest $request, $id)
+	public function cerrarNomina(NominaRequest $request, $id)
 	{
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			NominaServiceAction::editar($params);
-			return ApiResponse::success("Nomina editado correctamente.");
+			NominaServiceAction::cerrarNomina($params);
+			return ApiResponse::success("Nómina cerrada correctamente.");
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}
@@ -91,8 +92,8 @@ class NominaController extends Controller
 		try {
 			$params = $request->all();
 			$params['id'] = $id;
-			NominaServiceAction::eliminar($params);
-			return ApiResponse::success("Nomina eliminado correctamente.");
+			$nomina = NominaServiceAction::eliminar($params);
+			return ApiResponse::success("Nomina eliminado correctamente.", $nomina);
 		} catch (\Throwable $th) {
 			return ApiResponse::error($th->getMessage());
 		}

@@ -24,7 +24,7 @@ class NominaRepoData
           'n.*',
           DB::raw("CASE
             WHEN n.status = 200 THEN 'Activo'
-            WHEN n.status = 201 THEN 'Cerrado'
+            WHEN n.status = 400 THEN 'Cerrado'
             WHEN n.status = 300 THEN 'Eliminado'
             ELSE 'Sin definir'
           END as status_nombre")
