@@ -51,10 +51,20 @@ class GastoDirectoRepoData
             ELSE 'Sin definir'
           END as status_nombre"),
           DB::raw("CONCAT(o.nombre,' ',o.apellidos) as nombre_operador"),
-          'cgd.nombre as nombre_gasto_directo'
+          'cgd.nombre as nombre_gasto_directo',
+          // Nomina
+          'n.serie_folio as nomina_folio',
+          'n.status as nomina_status',
+          DB::raw("CASE
+            WHEN n.status = 200 THEN 'Activo'
+            WHEN n.status = 400 THEN 'Cerrado'
+            WHEN n.status = 300 THEN 'Eliminado'
+            ELSE 'Sin definir'
+          END as nomina_status_nombre")
         )
         ->join('operadores as o', 'o.id', 'gd.operador_id')
         ->join('cat_gastos_directos as cgd', 'cgd.id', 'gd.cat_gasto_directo_id')
+        ->leftJoin('nominas as n', 'n.id', 'gd.nomina_id')
         ;
       GastoDirectoRH::filtrosListar($query, (array) $filtros);
       return $query->get()->toArray();

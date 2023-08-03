@@ -12,6 +12,7 @@ use App\Utils\LogUtil;
 use ErrorException;
 use Illuminate\Support\Facades\DB;
 use Exception;
+use stdClass;
 
 class GastoDirectoServiceAction
 {
@@ -45,22 +46,20 @@ class GastoDirectoServiceAction
 	 * editar
 	 *
 	 * @param  mixed $datos
-	 * @return array
+	 * @return stdClass
 	 */
-	public static function editar(array $datos): array
+	public static function editar(array $datos): stdClass
 	{
 		try {
-			$gasto = GastoDirecto::where('status', Constantes::ACTIVO_STATUS)->find($datos['id']);
-
-			if (empty($gasto)) {
-				throw new Exception('Gasto directo no encontrado');
-			}
+			self::validarEditarEliminar($datos);
 			DB::beginTransaction();
 			$update = GastoDirectoBO::armarUpdate($datos);
 			GastoDirectoRepoAction::actualizar($update, $datos['id']);
-			$update['id'] = $datos['id'];
+			$gastoDirecto = GastoDirectoRepoData::listar([
+				'gastosDirectosIds' => [$datos['id']]
+			])[0];
 			DB::commit();
-			return $update;
+			return $gastoDirecto;
 		} catch (\Throwable $th) {
 			DB::rollBack();
 			throw $th;
@@ -76,11 +75,7 @@ class GastoDirectoServiceAction
 	public static function eliminar(array $datos): array
 	{
 		try {
-			$gasto = GastoDirecto::where('status', Constantes::INACTIVO_STATUS)->find($datos['id']);
-
-			if (!empty($gasto)) {
-				throw new Exception('Gasto directo ya fue eliminado anteriormente');
-			}
+			self::validarEditarEliminar($datos);
 			DB::beginTransaction();
 			$update = HelperBO::armarDeleteGlobal($datos);
 			GastoDirectoRepoAction::actualizar($update, $datos['id']);
@@ -92,6 +87,29 @@ class GastoDirectoServiceAction
 		} catch (\Throwable $th) {
 			DB::rollBack();
 			throw $th;
+		}
+	}
+
+	/***** METODOS DE VALIDACION ANTES DE UNA ACCION*********/
+	private static function validarEditarEliminar($datos)
+	{
+		try {
+			$gasto = GastoDirectoRepoData::listar(['gastosDirectosIds' => [$datos['id']]]);
+
+			if (empty($gasto)) {
+				throw new Exception('Gasto directo no encontrado');
+			}
+
+			if ($gasto[0]->status == Constantes::INACTIVO_STATUS) {
+				throw new Exception('Gasto directo ya fue eliminado anteriormente');
+			}
+
+			if (!empty($gasto[0]->nomina_id) && $gasto[0]->nomina_status == Constantes::CERRADO_FINALIZADO_STATUS) {
+				throw new Exception("No se puede eliminar el gasto ya que se encuentra en la nómina {$gasto[0]->nomina_folio} con status {$gasto[0]->nomina_status_nombre}");
+			}
+
+		} catch (Exception $e) {
+			throw new Exception($e->getMessage());
 		}
 	}
 }
