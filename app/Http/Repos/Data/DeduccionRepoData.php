@@ -52,10 +52,20 @@ class DeduccionRepoData
             ELSE 'Sin definir'
           END as status_nombre"),
           DB::raw("CONCAT(o.nombre,' ',o.apellidos) as nombre_operador"),
-          'cd.nombre as nombre_deduccion'
+          'cd.nombre as nombre_deduccion',
+          // Nomina
+          'n.serie_folio as nomina_folio',
+          'n.status as nomina_status',
+          DB::raw("CASE
+            WHEN n.status = 200 THEN 'Activo'
+            WHEN n.status = 400 THEN 'Cerrado'
+            WHEN n.status = 300 THEN 'Eliminado'
+            ELSE 'Sin definir'
+          END as nomina_status_nombre")
         )
         ->join('operadores as o', 'o.id', 'd.operador_id')
         ->join('cat_deducciones as cd', 'cd.id', 'd.cat_deduccion_id')
+        ->leftJoin('nominas as n', 'n.id', 'd.nomina_id')
         ;
       DeduccionRH::filtrosListar($query, (array) $filtros);
       return $query->get()->toArray();

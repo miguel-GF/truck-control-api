@@ -31,6 +31,7 @@ class DeduccionBO
         //'actualizacion_autor_id' => 
         //'actualizacion_fecha' => DateUtil::now(),
         'aplicacion_fecha' => $datos['aplicacionFecha'],
+        'comentario' => $datos['comentario'] ?? null,
       ];
     } catch (\Throwable $th) {
       throw $th;
@@ -47,10 +48,13 @@ class DeduccionBO
   {
     try {
       return [
+        'cat_deduccion_id' => $datos['catDeduccionId'],
         'cantidad' => $datos['cantidad'],
         'precio' => $datos['precio'],
         'total' => $datos['total'],
+        'aplicacion_fecha' => $datos['aplicacionFecha'],
         'actualizacion_fecha' => DateUtil::now(),
+        'comentario' => $datos['comentario'] ?? null,
       ];
     } catch (\Throwable $th) {
       throw $th;
